@@ -44,7 +44,8 @@ def login_user(request):
             domain = user.username.split('@')[1]
             if domain in email_domains:
                 link = email_domains[domain]
-                msg = mark_safe(f'User is not active, check your <a href={link}>email</a> to activate your account')
+                msg = mark_safe(f'User is not active, check your <a href={link}>email</a> to activate your account<br>'
+                                f"Didn't receive an email? <a href='/resend-activation'>Resend activation email</a>")
             else:
                 msg = 'User is not active, check your email to activate your account'
             messages.error(request, msg)
@@ -76,15 +77,21 @@ def register(request):
                 user.save()
                 activate_user = ActivateUser(user=user, token=uuid4())
                 ActivateUser.objects.create(user=user, token=activate_user.token)
-
                 send_mail(
-                    subject='Activate your account',
-                    message=f'Click the link to activate your account: {settings.DOMAIN}/activate/{activate_user.token}',
+                    subject='Activate your account for URL Shortener',
+                    message=f'Click the link to activate your account: {settings.DOMAIN}/activate/{user.token}',
                     from_email=settings.EMAIL_HOST_USER,
                     recipient_list=[user.email],
                     fail_silently=False
                 )
-                print("Email sent!")
+                domain = user.username.split('@')[1]
+                if domain in email_domains:
+                    link = email_domains[domain]
+                    msg = mark_safe(f"We've sent an <a href={link}>email</a> to {user.email} to activate your account.")
+                else:
+                    msg = f'We have sent an email to {user.email} to activate your account.'
+                messages.success(request, msg)
+            return redirect('login')
     return render(request, 'users/register.html')
 
 
@@ -100,6 +107,32 @@ def activate(request, token):
     else:
         messages.error(request, 'User activation failed')
         return redirect('login')
+
+
+def resend_activation(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        user = User.objects.filter(email=email).first()
+
+        if user:
+            if not user.is_active:
+                activate_user = ActivateUser.objects.get(user=user)
+                send_mail(
+                    subject='Reactivate your account for URL Shortener',
+                    message=f'Click the link to reactivate your account: {settings.DOMAIN}/activate/{activate_user.token}',
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[user.email],
+                    fail_silently=False
+                )
+                messages.success(request, f'Reactivation email sent to {user.email}')
+            else:
+                messages.error(request, 'User is already active.')
+        else:
+            messages.error(request, 'User with this email does not exist.')
+
+        return redirect('login')  # Redirect to login page or wherever you want
+
+    return render(request, 'users/resend_activation.html')
 
 
 def logout_user(request):

@@ -1,0 +1,28 @@
+<!-- users/resend_activation.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-md-6 mt-5">
+      <h1 class="text-center">Resend Activation Email</h1>
+      <form method="post" action="{% url 'resend-activation' %}" class="mt-4">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input type="email" class="form-control" id="email" name="email" placeholder="Enter your Email" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Resend Activation Email</button>
+      </form>
+      {% if messages %}
+        <div class="container mt-3">
+          {% for message in messages %}
+            <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %} role="alert">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
