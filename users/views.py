@@ -79,7 +79,7 @@ def register(request):
                 ActivateUser.objects.create(user=user, token=activate_user.token)
                 send_mail(
                     subject='Activate your account for URL Shortener',
-                    message=f'Click the link to activate your account: {settings.DOMAIN}/activate/{user.token}',
+                    message=f'Click the link to activate your account: {settings.DOMAIN}/activate/{activate_user.token}',
                     from_email=settings.EMAIL_HOST_USER,
                     recipient_list=[user.email],
                     fail_silently=False
