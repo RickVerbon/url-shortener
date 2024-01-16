@@ -7,11 +7,24 @@
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item active">
-        <a class="nav-link" href="#">Home</a>
+        <a class="nav-link" href="{% url 'dashboard' %}">Home</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">My Urls</a>
+        <a class="nav-link" href="{% url 'create-url' %}">Create URL</a>
       </li>
+    </ul>
+
+    <!-- Add this list item to the right -->
+    <ul class="navbar-nav ml-auto">
+        {% if user.is_authenticated %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+      </li>
+        {% else %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'login' %}">Login</a>
+      </li>
+        {% endif %}
     </ul>
   </div>
 </nav>

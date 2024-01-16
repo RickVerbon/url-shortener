@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
@@ -22,7 +22,10 @@ email_domains = {
 }
 
 
-def login(request):
+def login_user(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+
     if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
@@ -32,8 +35,8 @@ def login(request):
         if user is not None and user.is_active:
             authenticated_user = authenticate(request, username=email, password=password)
             if authenticated_user is not None:
-                messages.error(request, 'User logged in successfully')
-                return render(request, 'users/login.html')
+                login(request, authenticated_user)
+                return redirect('dashboard')
             else:
                 messages.error(request, 'Email address or password is incorrect')
                 return render(request, 'users/login.html')
@@ -54,6 +57,9 @@ def login(request):
 
 
 def register(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+
     if request.method == 'POST':
         username = request.POST['email']
         password = request.POST['password']
@@ -94,3 +100,8 @@ def activate(request, token):
     else:
         messages.error(request, 'User activation failed')
         return redirect('login')
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('login')
