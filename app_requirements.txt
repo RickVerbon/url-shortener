@@ -1,0 +1,15 @@
+# Users and profiles
+- User registration and login
+- User profile
+- User roles or groups
+- User activation (by email)
+- Expiring tokens for password reset and activation
+- User password reset (by email)
+- User password change
+
+# Application
+- Url shortener with custom alias
+- Url shortener with random alias
+
+
+
