@@ -22,8 +22,10 @@
           <td>{{ url.short_url }}</td>
           <td>{{ url.clicks }}</td>
           <td>
-            <button type="button" class="btn btn-primary btn-sm">Edit</button>
-            <button type="button" class="btn btn-danger btn-sm">Delete</button>
+              <form method="POST" action="{% url 'delete-url' url.id %}">
+                  {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm" id="{{ url.id }}">Delete</button>
+              </form>
           </td>
         </tr>
       {% endfor %}

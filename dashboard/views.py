@@ -2,7 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from dashboard.models import Url
+
 # Create your views here.
 
 
@@ -12,6 +14,7 @@ def dashboard(request):
     return render(request, 'dashboard/dashboard.html', {'user_urls': user_urls})
 
 
+@login_required
 def create_url(request):
     domain = settings.DOMAIN
     if request.method == "POST":
@@ -39,6 +42,19 @@ def create_url(request):
             return redirect('dashboard')
 
     return render(request, 'dashboard/create_url.html', {'domain': domain})
+
+
+@login_required
+def delete_url(request, _id):
+    if request.method == "POST":
+        url = get_object_or_404(Url, id=_id)
+        if url.user == request.user:
+            url.delete()
+            messages.success(request, 'Url deleted successfully')
+            return redirect('dashboard')
+        else:
+            messages.error(request, 'You are not authorized to delete this url')
+            return PermissionDenied
 
 
 def redirect_url(request, short_url):
