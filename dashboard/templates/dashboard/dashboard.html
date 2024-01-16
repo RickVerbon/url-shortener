@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h1 class="mb-4">Dashboard</h1>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Original URL</th>
+          <th scope="col">Shortened URL</th>
+          <th scope="col">Clicks</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for url in user_urls %}
+        <tr>
+          <th scope="row">1</th>
+          <td>{{ url.url }}</td>
+          <td>{{ url.short_url }}</td>
+          <td>{{ url.clicks }}</td>
+          <td>
+            <button type="button" class="btn btn-primary btn-sm">Edit</button>
+            <button type="button" class="btn btn-danger btn-sm">Delete</button>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %} role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+  </div>
+{% endblock %}
