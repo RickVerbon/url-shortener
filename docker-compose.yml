@@ -14,7 +14,7 @@ services:
       - DB_PASSWORD=urlshort
       - DB_HOST=db
       - DB_PORT=5432
-      - DEBUG=false
+      - DEBUG=true
 
     volumes:
       - ./static:/app/static

@@ -31,8 +31,7 @@ SECRET_KEY = 'django-insecure-1^nudy(%6$=(w7#+w+xmhz%31kd-=%c6#e#tnp$ht=5swz)#r#
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true' \
     if os.environ.get('DEBUG') is not None else True
 
-
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['localhost', 'www.rverb.nl', 'rverb.nl']
 
 
 # Application definition
