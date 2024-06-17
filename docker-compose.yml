@@ -1,0 +1,51 @@
+services:
+  api:
+    container_name: urlshort-api
+    build:
+      context: .
+      dockerfile: ./backend/docker/dev/Dockerfile
+    volumes:
+      - ./backend:/opt/urlshortener/backend
+    restart: always
+    environment:
+      URLSHORT_BASE_URL: http://localhost:8000
+      URLSHORT_DATABASE: postgres
+      URLSHORT_ENVIRONMENT: development
+      URLSHORT_FRONTEND_URL: "http://localhost:3000"
+      PGHOST: db
+      PGUSER: urlshort
+      PGPORT: 5432
+      PGPASSWORD: urlshort
+      PGDATABASE: urlshort
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    container_name: urlshort-db
+    image: postgres:15
+    environment:
+      POSTGRES_USER: urlshort
+      POSTGRES_PASSWORD: urlshort
+      POSTGRES_DB: urlshort
+    ports:
+      - "5432:5432"
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U urlshort"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    container_name: urlshort-frontend
+    build:
+      context: .
+      dockerfile: ./frontend/docker/dev/Dockerfile
+    volumes:
+      - ./frontend:/opt/urlshortener/frontend
+    restart: always
+    ports:
+      - "3000:3000"
