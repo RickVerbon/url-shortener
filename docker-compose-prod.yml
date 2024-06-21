@@ -1,0 +1,40 @@
+services:
+  api:
+    container_name: urlshort-api
+    build:
+      context: .
+      dockerfile: ./backend/docker/prod/Dockerfile
+    restart: always
+    environment:
+      URLSHORT_BASE_URL: urlshort-api
+      URLSHORT_DATABASE: postgres
+      URLSHORT_ENVIRONMENT: production
+      URLSHORT_FRONTEND_URL: urlshort-frontend
+      PGHOST: 192.168.123.142
+      PGUSER: urlshort
+      PGPORT: 5432
+      PGPASSWORD: urlshort
+      PGDATABASE: urlshortener
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - urlshort-network
+
+  frontend:
+    container_name: urlshort-frontend
+    build:
+      context: .
+      dockerfile: ./frontend/docker/prod/Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - urlshort-network
+
+
+networks:
+  urlshort-network:
+    driver: bridge
