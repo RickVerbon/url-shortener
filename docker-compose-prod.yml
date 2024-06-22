@@ -15,8 +15,8 @@ services:
       PGPORT: 5432
       PGPASSWORD: urlshort
       PGDATABASE: urlshortener
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     networks:
       - urlshort-network
 
@@ -25,9 +25,24 @@ services:
     build:
       context: .
       dockerfile: ./frontend/docker/prod/Dockerfile
+    env_file:
+      - ./frontend/.env
     restart: always
+    expose:
+      - "80"
+    networks:
+      - urlshort-network
+
+  nginx:
+    container_name: urlshort-nginx
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
     ports:
       - "80:80"
+    depends_on:
+      - api
+      - frontend
     networks:
       - urlshort-network
 
