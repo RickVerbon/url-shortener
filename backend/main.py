@@ -31,25 +31,18 @@ def get_db():
     finally:
         db.close()
 
-
-@app.get("/{short_url}/")
-async def goto_url(short_url: str, db: Session = Depends(get_db)):
-    url_info = crud.get_url_by_short_url(db, short_url)
-    if url_info:
-        return RedirectResponse(url=url_info.url)
-
-
 @app.post("/api/v1/")
 async def create_url(url_create: UrlCreate, db: Session = Depends(get_db)) -> UrlResponse:
     return crud.create_url(db=db, url_create=url_create)
 
 
-if settings.environment == "development":
-    @app.get("/api/v1/{short_url}/")
-    async def get_url(short_url: str, db: Session = Depends(get_db)):
-        url = crud.get_url_by_short_url(db, short_url)
-        return url
+@app.get("/api/v1/{short_url}/")
+async def get_url(short_url: str, db: Session = Depends(get_db)):
+    url = crud.get_url_by_short_url(db, short_url)
+    return url
 
+
+if settings.environment == "development":
     @app.get("/api/v1/")
     async def get_all_urls(db: Session = Depends(get_db)):
         urls = crud.get_all_urls(db)
