@@ -10,15 +10,13 @@ services:
       URLSHORT_DATABASE: postgres
       URLSHORT_ENVIRONMENT: production
       URLSHORT_FRONTEND_URL: urlshort-frontend
-      PGHOST: 192.168.123.142
+      PGHOST: db
       PGUSER: urlshort
       PGPORT: 5432
       PGPASSWORD: urlshort
-      PGDATABASE: urlshortener
+      PGDATABASE: urlshort
     expose:
       - "8000"
-    networks:
-      - urlshort-network
 
   frontend:
     container_name: urlshort-frontend
@@ -30,8 +28,22 @@ services:
     restart: always
     expose:
       - "80"
-    networks:
-      - urlshort-network
+
+  db:
+    container_name: urlshort-db
+    image: postgres:15
+    environment:
+      POSTGRES_USER: urlshort
+      POSTGRES_PASSWORD: urlshort
+      POSTGRES_DB: urlshort
+    ports:
+      - "5431:5432"
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U urlshort"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   nginx:
     container_name: urlshort-nginx
@@ -43,9 +55,3 @@ services:
     depends_on:
       - api
       - frontend
-    networks:
-      - urlshort-network
-
-networks:
-  urlshort-network:
-    driver: bridge
