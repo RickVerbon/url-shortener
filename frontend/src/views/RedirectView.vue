@@ -13,7 +13,7 @@ export default {
   data() {
     return {
       url: '',
-      apiUrl: import.meta.env.VITE_URLSHORT_API_URL,
+      frontUrl: import.meta.env.VITE_URLSHORT_FRONT_URL,
     };
   },
   name: 'RedirectView',
@@ -23,9 +23,9 @@ export default {
   },
   methods: {
     async redirectToOriginalUrl() {
-      const apiUrl = this.apiUrl;
+      const frontUrl = this.frontUrl;
       try {
-        const response = await axios.get(`${apiUrl}${this.shortUrl}`);
+        const response = await axios.get(`${frontUrl}${this.shortUrl}`);
         if (response.data.url) {
           this.url = response.data.url;
           window.location.href = response.data.url;
